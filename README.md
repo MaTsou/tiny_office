@@ -52,7 +52,7 @@ cloud_editor = TinyOffice::CloudEditor.new do |cloud_config|
   cloud_config.editor_service_config = editor_service_default_config
 end
 ```
-See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/get-started/how-it-works/opening-file/) documentation to learn more about the `editor service config` available contents.
+See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/get-started/how-it-works/opening-file/) documentation to learn more about the `editor_service_config` available contents.
 
 Usage :
 
@@ -82,7 +82,7 @@ Notes :
   handle different events. I implemented one of these in `js` folder (to be completed) : this is `onRequestClose`. To configure which of these events you want to set, you can add a `supported_events_level` entry to your config :
  ```
  my_var = cloud_editor.call(:edit) do |config|
-   config.supported_events_level: TinyOffice::EventsLevel.full
+   config.supported_events_level = TinyOffice::EventsLevel.full
  end
  ```
  Other possible methods to `EventsLevel` are `read_only` and `no_event`.
