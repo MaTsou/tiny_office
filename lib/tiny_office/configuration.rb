@@ -1,4 +1,6 @@
 module TinyOffice
+  DEFAULT_JS_CDN = "https://cdn.jsdelivr.net/gh/MaTsou/tiny_office@#{VERSION}/lib/tiny_office/js/tinyoffice.min.js"
+
   class Configuration
     attr_accessor(
       :html_wrapper, :token_builder, :editor_service_config, :logo,
@@ -9,8 +11,8 @@ module TinyOffice
       @html_wrapper ||= Wrapper::FullPage.new
     end
 
-    def only_office_js_cdn
-      @only_office_js_cdn ||= "https://github.com/MaTsou/tiny_office.git/lib/tiny_office/js/tinyoffice.min.js"
+    def onlyoffice_js_cdn
+      @onlyoffice_js_cdn ||= DEFAULT_JS_CDN
     end
   end
 end
