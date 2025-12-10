@@ -23,7 +23,7 @@ module TinyOffice
     def initialize(cloud_config)
       @cloud_config = cloud_config
       @token_builder = cloud_config.token_builder
-      @config = default_action_config(cloud_config).fine_merge(@@config)
+      @config = editor_service_config(cloud_config).fine_merge(@@config)
       yield self
     end
 
@@ -66,8 +66,8 @@ module TinyOffice
       hash.transform_keys(&:to_sym)
     end
 
-    def default_action_config(configuration)
-      ExtendedHash[configuration.action_defaults || {}]
+    def editor_service_config(configuration)
+      ExtendedHash[configuration.editor_service_config || {}]
     end
   end
 end
