@@ -1,0 +1,24 @@
+PATH
+  remote: .
+  specs:
+    tiny_office (0.1.0)
+      jwt (~> 3.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    base64 (0.3.0)
+    jwt (3.1.2)
+      base64
+    rake (13.3.1)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  rake (~> 13.0)
+  tiny_office!
+
+BUNDLED WITH
+   2.5.14

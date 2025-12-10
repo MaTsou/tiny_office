@@ -1,0 +1,2 @@
+run (in command line)
+minify -b -o tinyoffice.min.js src/*
