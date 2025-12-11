@@ -20,7 +20,8 @@ class ExtendedHash < Hash
   private
 
   def converted(hash)
-    return hash if hash.is_a? ExtendedHash
+    # using 'dup' here to avoid side effects.. Sufficient ?
+    return hash.dup if hash.is_a? ExtendedHash
 
     ExtendedHash[hash]
   end

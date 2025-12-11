@@ -27,13 +27,17 @@ module TinyOffice
     end
 
     def self.default(name, to:)
-      @@config ||= configuration
+      # tempted to replace ExtendedHash.new by configuration ?
+      # No because 'default' is call when editor_service SUBCLASSES are 
+      # required ! A this time, 'configuration' is not set..
+      @@config ||= ExtendedHash.new
       @@config.fine_merge(name => to)
     end
 
     def initialize
       @config = self.class.configuration.fine_merge(@@config)
       yield self
+      self
     end
 
     # Anticipating further development, I decide to return an object, even if 
