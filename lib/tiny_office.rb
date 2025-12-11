@@ -11,6 +11,7 @@ require_relative 'tiny_office/actions/events_level'
 require_relative 'tiny_office/actions/action'
 require_relative 'tiny_office/actions/edit'
 require_relative 'tiny_office/wrapper/full_page'
+require_relative 'tiny_office/js_type'
 
 module TinyOffice
   class Error < StandardError; end
