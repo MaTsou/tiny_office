@@ -33,6 +33,7 @@ module TinyOffice
       TinyOffice.new(
         cloud_config: cloud_config,
         config: config.merge(token: token).to_json,
+        js_inner_script: js_inner_script
       )
     end
 
@@ -68,6 +69,20 @@ module TinyOffice
 
     def editor_service_config(configuration)
       ExtendedHash[configuration.editor_service_config || {}]
+    end
+
+    def js_inner_script
+      return '' unless js_inline?
+      File.read(
+        File.join(
+          Gem.loaded_specs['tiny_office'].full_gem_path,
+          'lib/tiny_office/js/tinyoffice.min.js'
+        )
+      )
+    end
+
+    def js_inline?
+      cloud_config.tinyoffice_js_type.to_sym == JsType.inline_script
     end
   end
 end

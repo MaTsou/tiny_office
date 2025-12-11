@@ -4,7 +4,7 @@ module TinyOffice
   class Configuration
     attr_accessor(
       :html_wrapper, :token_builder, :editor_service_config, :logo,
-      :onlyoffice_url, :onlyoffice_js_cdn
+      :onlyoffice_url, :tinyoffice_js_type, :tinyoffice_js_cdn
     )
 
     def html_wrapper
@@ -13,6 +13,10 @@ module TinyOffice
 
     def onlyoffice_js_cdn
       @onlyoffice_js_cdn ||= DEFAULT_JS_CDN
+    end
+
+    def tinyoffice_js_type
+      @tinyoffice_js_type ||= JsType.inline_script
     end
   end
 end

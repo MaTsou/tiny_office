@@ -57,8 +57,12 @@ module TinyOffice
       def js_files
         [
           "#{cloud_config.onlyoffice_url}web-apps/apps/api/documents/api.js",
-          cloud_config.onlyoffice_js_cdn
-        ]
+          (cloud_config.onlyoffice_js_cdn if js_from_cdn?)
+        ].compact
+      end
+
+      def js_from_cdn?
+        cloud_config.tinyoffice_js_type.to_sym == JsType.cdn
       end
     end
   end
