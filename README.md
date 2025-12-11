@@ -46,32 +46,35 @@ editor_service_default_config = {
   # etc.
 }
 
-cloud_editor = TinyOffice::CloudEditor.new do |cloud_config|
+cloud_editor = TinyOffice::CloudEditor.new do |cloud_config, service_config|
   cloud_config.onlyoffice_url = ENV['ONLYOFFICE_URL']
   cloud_config.token_builder = jwt_encoder
-  cloud_config.editor_service_config = editor_service_default_config
+  service_config = editor_service_default_config
 end
 ```
 See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/get-started/how-it-works/opening-file/) documentation to learn more about the `editor_service_config` available contents.
 
 Usage :
 
-Syntax : `cloud_editor.call(supported_method) { |config| # customize editor service config here }`
+Syntax : `cloud_editor.call(service_name) { |service_config| # customize editor service config here }`
 
-Example : to `edit` a document (for now the only supported method)  :
+Example : to `edit` a document (for now the only supported service)  :
 ```
-my_var = cloud_editor.call(:edit) do |config|
-  config.document = {
+my_var = cloud_editor.call(:edit) do |service_config|
+  service_config.document = {
     fileType: my_document_file_type,
     title: my_document_title,
     url: my_document_url,
     key: my_document_unique_key
   }
-  config.editorConfig = {
+  service_config.editorConfig = {
     callbackUrl: my_callback_url,
   }
 end
 ```
+Note that `service_config` will be **constructively** merged in 
+`editor_service_default_config` : take care to override only existing keys (or 
+subkeys)..
 
 ```
 # my-template.html.erb
@@ -84,7 +87,7 @@ Notes :
 + Delivering the needed js code could be done in multiple ways :
   + First, you can replace `my_var.js_inner_script` by you own code
   + You can provide the TinyOffice original js code from cdn : just add 
-    `cloud_config.tinyoffice_js_from = TinyOffice::JsType.cdn` to initial 
+    `cloud_config.tinyoffice_js_type = TinyOffice::JsType.cdn` to initial 
     config and remove `<script>` tag from your template.
   + Further, you can provide you own cdn source :
     ```
@@ -94,8 +97,8 @@ Notes :
 + According to OnlyOfficeDocs documentation, the editor service config can 
   handle different events. I implemented one of these in `js` folder (to be completed) : this is `onRequestClose`. To configure which of these events you want to set, you can add a `supported_events_level` entry to your config :
  ```
- my_var = cloud_editor.call(:edit) do |config|
-   config.supported_events_level = TinyOffice::EventsLevel.full
+ my_var = cloud_editor.call(:edit) do |cloud_config, service_config|
+   service_config.supported_events_level = TinyOffice::EventsLevel.full
  end
  ```
  Other possible methods to `EventsLevel` are `read_only` and `no_event`.
