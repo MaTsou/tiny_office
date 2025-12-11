@@ -73,11 +73,24 @@ my_var = cloud_editor.call(:edit) do |config|
 end
 ```
 
-`my_var` now contains an `OnlyOffice` object. Insert `<%= my_var.page_content 
-%>` inside any html template and you will have a OnlyOffice editor embeded 
-in your page.
+```
+# my-template.html.erb
+<%== my_var.page_content %>
+<script><%= my_var.js_inner_script.html_safe %></script>
+```
+will leads to an embeded OnlyOffice editor.
 
 Notes :
++ Delivering the needed js code could be done in multiple ways :
+  + First, you can replace `my_var.js_inner_script` by you own code
+  + You can provide the TinyOffice original js code from cdn : just add 
+    `cloud_config.tinyoffice_js_from = TinyOffice::JsType.cdn` to initial 
+    config and remove `<script>` tag from your template.
+  + Further, you can provide you own cdn source :
+    ```
+    cloud_config.tinyoffice_js_type = TinyOffice::JsType.cdn
+    cloud_config.tinyoffice_js_cdn = "custom cdn url"
+    ```
 + According to OnlyOfficeDocs documentation, the editor service config can 
   handle different events. I implemented one of these in `js` folder (to be completed) : this is `onRequestClose`. To configure which of these events you want to set, you can add a `supported_events_level` entry to your config :
  ```
