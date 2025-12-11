@@ -7,6 +7,17 @@ module TinyOffice
     # Every child would possibly define default config content. This is the 
     # purpose of default class method. Depending of the content type (Hash or 
     # String), the initializing block can merge to or replace the defaults
+    #
+    # Here EditorService class level methods
+    def self.configuration=(configuration_hash)
+      @@configuration = ExtendedHash[configuration_hash]
+    end
+
+    def self.configuration
+      @@configuration ||= ExtendedHash.new
+    end
+
+    # Here EditorService SUBCLASS class level methods
     def self.payload_is_config
       define_method :payload_content, ->{ :config }
     end
@@ -15,21 +26,20 @@ module TinyOffice
       define_method :payload_content, ->{ :method }
     end
 
-    def self.default(name, content)
-      @@config ||= ExtendedHash.new
-      @@config.fine_merge(name => content)
+    def self.default(name, to:)
+      @@config ||= configuration
+      @@config.fine_merge(name => to)
     end
 
-    def initialize(cloud_config)
-      @cloud_config = cloud_config
-      @token_builder = cloud_config.token_builder
-      @config = editor_service_config(cloud_config).fine_merge(@@config)
+    def initialize
+      @config = self.class.configuration.fine_merge(@@config)
       yield self
     end
 
     # Anticipating further development, I decide to return an object, even if 
     # for now only the config attribute is needed..
-    def call
+    def call(cloud_config)
+      @cloud_config = cloud_config
       TinyOffice.new(
         cloud_config: cloud_config,
         config: config.merge(token: token).to_json,
@@ -46,10 +56,10 @@ module TinyOffice
     end
 
     private
-    attr_reader :token_builder, :config, :cloud_config
+    attr_reader :cloud_config, :config
 
     def token
-      token_builder.call(payload)
+      cloud_config.token_builder.call(payload)
     end
 
     def payload
@@ -65,10 +75,6 @@ module TinyOffice
 
     def symbolize_keys(hash)
       hash.transform_keys(&:to_sym)
-    end
-
-    def editor_service_config(configuration)
-      ExtendedHash[configuration.editor_service_config || {}]
     end
 
     def js_inner_script

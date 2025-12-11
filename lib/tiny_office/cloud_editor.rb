@@ -6,7 +6,7 @@ module TinyOffice
     }
 
     def initialize
-      yield configuration
+      yield configuration, EditorService.configuration
     end
 
     def configuration
@@ -15,8 +15,8 @@ module TinyOffice
 
     def call(action, &block)
       builder_class(action).
-        new(configuration, &block).
-        call
+        new(&block).
+        call(configuration)
     end
 
     private

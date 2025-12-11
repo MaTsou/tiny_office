@@ -3,7 +3,7 @@ module TinyOffice
 
   class Configuration
     attr_accessor(
-      :html_wrapper, :token_builder, :editor_service_config, :logo,
+      :html_wrapper, :token_builder, :logo,
       :onlyoffice_url, :tinyoffice_js_type, :tinyoffice_js_cdn
     )
 

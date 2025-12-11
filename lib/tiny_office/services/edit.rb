@@ -1,18 +1,18 @@
 module TinyOffice
-  class Edit < Action
+  class Edit < EditorService
     payload_is_config
 
-    default :document, {
+    default :document, to: {
       fileType: 'docx',
       title: 'Titre',
     }
 
-    default :permissions, {
+    default :permissions, to: {
       edit: true,
       print: false,
     }
 
-    default :supported_events_level, EventsLevel.full
-    default :documentType, 'word'
+    default :supported_events_level, to: EventsLevel.full
+    default :documentType, to: 'word'
   end
 end
