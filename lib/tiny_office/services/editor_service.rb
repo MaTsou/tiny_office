@@ -68,10 +68,6 @@ module TinyOffice
       end
     end
 
-    def symbolize_keys(hash)
-      hash.transform_keys(&:to_sym)
-    end
-
     def js_inner_script
       return '' unless js_inline?
       File.read(

@@ -11,7 +11,6 @@ module TinyOffice
     end
 
     def method_missing(name, *args)
-      Hanami.app['logger'].error "Service configuration missing method #{name} called with #{args}"
       return super unless name[-1] == '='
 
       attr_name = name[..-2].to_sym
