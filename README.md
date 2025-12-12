@@ -56,7 +56,7 @@ cloud_editor = TinyOffice::CloudEditor.new do |cloud_config, default_service_con
   default_service_config.otherKey = value
 end
 ```
-See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/usage-api/advanced-parameters/) documentation to learn more about the editor `service_config` available contents.
+See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/usage-api/advanced-parameters/){:target="_blanck"} documentation to learn more about the editor `service_config` available contents.
 
 Usage :
 
