@@ -38,7 +38,7 @@ editor_service_default_config = {
     customization: {
       anonymous: {
         request: true,
-        label: "Invité",
+        label: 'Invité',
       }
     },
     # etc.
@@ -46,13 +46,17 @@ editor_service_default_config = {
   # etc.
 }
 
-cloud_editor = TinyOffice::CloudEditor.new do |cloud_config, service_config|
+cloud_editor = TinyOffice::CloudEditor.new do |cloud_config, default_service_config|
   cloud_config.onlyoffice_url = ENV['ONLYOFFICE_URL']
   cloud_config.token_builder = jwt_encoder
-  service_config = editor_service_default_config
+  default_service_config.add(**editor_service_default_config)
+  default_service_config.add(otherKey: value)
+  # alternative syntax (use low level key as method name)
+  default_service_config.editorConfig = editor_service_default_config[:editorConfig]
+  default_service_config.otherKey = value
 end
 ```
-See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/get-started/how-it-works/opening-file/) documentation to learn more about the `editor_service_config` available contents.
+See [OnlyOfficeDocs](https://api.onlyoffice.com/docs/docs-api/usage-api/advanced-parameters/) documentation to learn more about the editor `service_config` available contents.
 
 Usage :
 
@@ -61,6 +65,18 @@ Syntax : `cloud_editor.call(service_name) { |service_config| # customize editor 
 Example : to `edit` a document (for now the only supported service)  :
 ```
 my_var = cloud_editor.call(:edit) do |service_config|
+  service_config.add(
+    document: {
+      fileType: my_document_file_type,
+      title: my_document_title,
+      url: my_document_url,
+      key: my_document_unique_key
+    },
+    editorConfig: {
+      callbackUrl: my_callback_url,
+    }
+  )
+  # alternative syntax (use root level key as method name)
   service_config.document = {
     fileType: my_document_file_type,
     title: my_document_title,
@@ -73,8 +89,8 @@ my_var = cloud_editor.call(:edit) do |service_config|
 end
 ```
 Note that `service_config` will be **constructively** merged in 
-`editor_service_default_config` : take care to override only existing keys (or 
-subkeys)..
+`default_service_config` : taking care to override only existing last level 
+keys..
 
 ```
 # my-template.html.erb
@@ -95,9 +111,16 @@ Notes :
     cloud_config.tinyoffice_js_cdn = "custom cdn url"
     ```
 + According to OnlyOfficeDocs documentation, the editor service config can 
-  handle different events. I implemented one of these in `js` folder (to be completed) : this is `onRequestClose`. To configure which of these events you want to set, you can add a `supported_events_level` entry to your config :
+  handle different events. I implemented one of these in `js` folder (to be completed) : this is `onRequestClose`. To configure which of these events you want to handle, you can add a `supported_events_level` entry to your config :
  ```
- my_var = cloud_editor.call(:edit) do |cloud_config, service_config|
+ # at initialization time
+cloud_editor = TinyOffice::CloudEditor.new do |cloud_config, default_service_config|
+   ...
+   default_service_config.supported_events_level = TinyOffice::EventsLevel.full
+ end
+ # or when calling a service
+ my_var = cloud_editor.call(:edit) do |service_config|
+   ...
    service_config.supported_events_level = TinyOffice::EventsLevel.full
  end
  ```
