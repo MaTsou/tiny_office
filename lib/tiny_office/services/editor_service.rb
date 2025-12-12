@@ -4,40 +4,39 @@ module TinyOffice
     # All of them must specify either payload_is_config or payload_is_method : 
     # this is for token to be correctly composed
     #
-    # Every child would possibly define default config content. This is the 
-    # purpose of default class method. Depending of the content type (Hash or 
-    # String), the initializing block can merge to or replace the defaults
-    #
-    # Here EditorService class level methods
-    def self.configuration=(configuration_hash)
-      @@configuration = ExtendedHash[configuration_hash]
+    # Every child would possibly define default config content.
+    # configure method yields a ServiceConfiguration instance.
+    # class level instance variables are use for this purpose. They allow 
+    # distinct values for EditorService parent class and each of its 
+    # subclasses..
+    class << self
+      def configuration
+        @configuration ||= ServiceConfiguration.new
+      end
+
+      def configure
+        yield configuration
+      end
+
+      # Here EditorService SUBCLASS class level methods used to customize 
+      # configuration to the current service (editor_service subclasses are 
+      # services)
+      def payload_is_config
+        define_method :payload_content, ->{ :config }
+      end
+
+      def payload_is_method
+        define_method :payload_content, ->{ :method }
+      end
     end
 
-    def self.configuration
-      @@configuration ||= ExtendedHash.new
-    end
-
-    # Here EditorService SUBCLASS class level methods
-    def self.payload_is_config
-      define_method :payload_content, ->{ :config }
-    end
-
-    def self.payload_is_method
-      define_method :payload_content, ->{ :method }
-    end
-
-    def self.default(name, to:)
-      # tempted to replace ExtendedHash.new by configuration ?
-      # No because 'default' is call when editor_service SUBCLASSES are 
-      # required ! A this time, 'configuration' is not set..
-      @@config ||= ExtendedHash.new
-      @@config.fine_merge(name => to)
-    end
-
+    # Instance level methods
     def initialize
-      @config = self.class.configuration.fine_merge(@@config)
-      yield self
-      self
+      current_config = ServiceConfiguration.new
+      yield current_config
+      @config = EditorService.configuration.
+        fine_merge(self.class.configuration).
+        fine_merge(current_config)
     end
 
     # Anticipating further development, I decide to return an object, even if 
@@ -46,17 +45,9 @@ module TinyOffice
       @cloud_config = cloud_config
       TinyOffice.new(
         cloud_config: cloud_config,
-        config: config.merge(token: token).to_json,
+        config: config.fine_merge(token: token).content.to_json,
         js_inner_script: js_inner_script
       )
-    end
-
-    # This is for any configuration attribute names
-    def method_missing(name, *args)
-      return super unless name[-1] == '='
-
-      attr_name = name[..-2].to_sym
-      config.fine_merge(attr_name => args.first)
     end
 
     private
@@ -69,9 +60,9 @@ module TinyOffice
     def payload
       case payload_content
       when :config
-        config
+        config.content
       when :method
-        config[:method]
+        config.content[:method]
       else
         'no_payload'
       end

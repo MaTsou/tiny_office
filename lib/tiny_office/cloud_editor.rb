@@ -6,7 +6,7 @@ module TinyOffice
     }
 
     def initialize
-      yield configuration, EditorService
+      yield configuration, EditorService.configuration
     end
 
     def configuration
