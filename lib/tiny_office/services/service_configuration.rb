@@ -18,9 +18,15 @@ module TinyOffice
     end
 
     def fine_merge(hash)
+      # Here, returning a new object and avoid side effects with duplicating 
+      # content..
       self.class.new.tap do |sc|
-        sc.add(**content.fine_merge(hash))
+        sc.add(**content.dup.fine_merge(hash))
       end
+    end
+
+    def ==(another)
+      content == another.content
     end
 
     private
@@ -50,8 +56,7 @@ module TinyOffice
         when Hash
           ExtendedHash[obj]
         when ExtendedHash
-          # using 'dup' here to avoid side effects.. Sufficient ?
-          obj.dup
+          obj
         else
           raise TypeError, "#{obj.class} has wrong type."
         end
