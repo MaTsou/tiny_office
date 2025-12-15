@@ -6,3 +6,9 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 13.0"
+
+group :development, :test do
+  gem 'minitest', '~> 5.24'
+  gem 'rubocop-minitest'
+  gem 'rubocop-rake'
+end
