@@ -1,6 +1,6 @@
 module TinyOffice
   class EditorService
-    # A base class for all OnlyOffice actions.
+    # A base class for all OnlyOffice services.
     # All of them must specify either payload_is_config or payload_is_method : 
     # this is for token to be correctly composed
     #
