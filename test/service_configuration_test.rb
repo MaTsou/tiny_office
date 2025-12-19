@@ -33,56 +33,72 @@ describe TinyOffice::ServiceConfiguration do
   end
 
   describe 'on fine merge' do
+    A_CONTENT = {
+      document: { title: 'hello world', type: 'docx' },
+      editor: {
+        lang: 'fr',
+        custom: {
+          close: {
+            visible: true,
+            text: 'La ferme'
+          },
+          another: 'Yeh !'
+        }
+      }
+    }.freeze
+
+    B_CONTENT = {
+      event: 'new key',
+      document: { title: 'hello world', type: 'changed_type' },
+      editor: {
+        lang: 'en',
+        custom: {
+          close: {
+            visible: true,
+            text: 'Close it now'
+          },
+        }
+      }
+    }.freeze
+
+    B_FINE_MERGED_IN_A_CONTENT = {
+      event: 'new key',
+      document: { title: 'hello world', type: 'changed_type' },
+      editor: {
+        lang: 'en',
+        custom: {
+          close: {
+            visible: true,
+            text: 'Close it now'
+          },
+          another: 'Yeh !'
+        }
+      }
+    }.freeze
+
     before do
       @a = TinyOffice::ServiceConfiguration.new
-      @a.add(
-        document: { title: 'hello world', type: 'docx' },
-        editor: {
-          lang: 'fr',
-          custom: {
-            close: {
-              visible: true,
-              text: 'La ferme'
-            },
-            another: 'Yeh !'
-          }
-        }
-      )
+      @a.add(**A_CONTENT)
 
       @b = TinyOffice::ServiceConfiguration.new
-      @b.add(
-        event: 'new key',
-        document: { title: 'hello world', type: 'changed_type' },
-        editor: {
-          lang: 'en',
-          custom: {
-            close: {
-              visible: true,
-              text: 'Close it now'
-            },
-          }
-        }
-      )
+      @b.add(**B_CONTENT)
 
       @b_fine_merged_in_a = TinyOffice::ServiceConfiguration.new
-      @b_fine_merged_in_a.add(
-        event: 'new key',
-        document: { title: 'hello world', type: 'changed_type' },
-        editor: {
-          lang: 'en',
-          custom: {
-            close: {
-              visible: true,
-              text: 'Close it now'
-            },
-            another: 'Yeh !'
-          }
-        }
-      )
+      @b_fine_merged_in_a.add(**B_FINE_MERGED_IN_A_CONTENT)
     end
 
-    it 'correctly works' do
+    it 'correctly provide the expected configuration' do
       _(@a.fine_merge(@b)).must_equal @b_fine_merged_in_a
+    end
+
+    it 'does not mutate source object' do
+      @a.fine_merge(@b)
+      _(@b.content).must_equal B_CONTENT
+    end
+
+    it 'does not mutate dest object' do
+      @a.fine_merge(@b)
+      _(@a.content).must_equal A_CONTENT
     end
   end
 end

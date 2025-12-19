@@ -23,11 +23,11 @@ describe TinyOffice::CloudEditor do
   before do
     @cloud_editor = TinyOffice::CloudEditor.new do |cloud_cfg, root_srv_cfg|
       cloud_cfg.token_builder = ->(cfg) { 'token' }
-      root_srv_cfg.add **ROOT_SERVICE_CFG
+      root_srv_cfg.add(**ROOT_SERVICE_CFG)
     end
 
     @service = @cloud_editor.call(:fakeservice) do |cfg|
-      cfg.add **SERVICE_CFG
+      cfg.add(**SERVICE_CFG)
     end
   end
 
